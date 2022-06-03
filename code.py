@@ -83,12 +83,12 @@ def printButtonPress(text):
     bg_sprite = displayio.TileGrid(color_bitmap, pixel_shader=color_palette, x=0, y=0)
     splash.append(bg_sprite)
     
-    time.sleep(0.05)
+    time.sleep(0.02)
             
     text_area = label.Label(terminalio.FONT, text=text, color=0xFFFF00, x=0, y=4)
     splash.append(text_area)
     
-    time.sleep(0.05)
+    time.sleep(0.02)
 
     bg_sprite = displayio.TileGrid(color_bitmap, pixel_shader=color_palette, x=0, y=0)
     splash.append(bg_sprite)
@@ -98,7 +98,7 @@ def printButtonPress(text):
     splash = displayio.Group()
     display.show(splash)
 
-    time.sleep(0.05)
+    time.sleep(0.02)
 
 def displayMacroList():
     global displayMenu
@@ -129,7 +129,7 @@ display.show(splash)
 
 ### MACRO FUNCTIONS
 
-windowsMode = 1
+windowsMode = 0
 
 if (windowsMode):
     Keycode.COMMAND = Keycode.CONTROL
@@ -139,12 +139,10 @@ if (windowsMode):
 def googleMeetToggleMic():
     global kbd
     kbd.send(Keycode.COMMAND, Keycode.D)
-    printButtonPress('Toggling Microphone')
 
 def googleMeetToggleCam():
     global kbd
     kbd.send(Keycode.COMMAND, Keycode.E)
-    printButtonPress('Toggling Camera')
 
 def googleMeetRaiseHand():
     global kbd
@@ -153,33 +151,45 @@ def googleMeetRaiseHand():
     kbd.press(Keycode.H)
     kbd.release_all()
 
-    printButtonPress('Raising Hand')
+def googleMeetHangUp():
+    global kbd
+    kbd.send(Keycode.ALT, Keycode.LEFT_ARROW)
 
 # VS Code
 
 def vsCodeBookmarkToggle():
     global kbd
-
     kbd.send(Keycode.COMMAND, Keycode.ALT, Keycode.K)
-    printButtonPress('Toggling Bookmark')
 
 def vsCodeBookmarkListAll():
     global kbd
-
     kbd.send(Keycode.COMMAND, Keycode.SHIFT, Keycode.ALT, Keycode.K)
-    printButtonPress('Listing Bookmarks')
 
 def vsCodeBookmarkPrevious():
     global kbd
-    
     kbd.send(Keycode.COMMAND, Keycode.ALT, Keycode.J)  
-    printButtonPress('Previous Bookmark') 
     
 def vsCodeBookmarkNext():
     global kbd
-
     kbd.send(Keycode.COMMAND, Keycode.ALT, Keycode.L)
-    printButtonPress('Next Bookmark') 
+
+# Discord
+
+def discordServerPrevious():
+    global kbd
+    kbd.send(Keycode.COMMAND, Keycode.ALT, Keycode.UP_ARROW)  
+
+def discordServerNext():
+    global kbd
+    kbd.send(Keycode.COMMAND, Keycode.ALT, Keycode.DOWN_ARROW)  
+
+def discordChannelPrevious():
+    global kbd
+    kbd.send(Keycode.ALT, Keycode.UP_ARROW)  
+
+def discordChannelNext():
+    global kbd
+    kbd.send(Keycode.ALT, Keycode.DOWN_ARROW)  
 
 ### RUNNING CODE
 
@@ -194,7 +204,7 @@ macroDictionary = {
             0: keyMacro('Microphone', googleMeetToggleMic),
             1: keyMacro('Camera', googleMeetToggleCam),
             2: keyMacro('Raise Hand', googleMeetRaiseHand),
-            3: keyMacro('- Unused -', googleMeetToggleMic)
+            3: keyMacro('Hang Up', googleMeetHangUp)
         }
     ),
     1: keyMacroGroup(
@@ -205,37 +215,51 @@ macroDictionary = {
             2: keyMacro('Previous', vsCodeBookmarkPrevious),
             3: keyMacro('Next', vsCodeBookmarkNext)
         }
+    ),
+    2: keyMacroGroup(
+        'Discord: Servers', 
+        {
+            0: keyMacro('Server <<', discordServerPrevious),
+            1: keyMacro('Server >>', discordServerNext),
+            2: keyMacro('Channel <<', discordChannelPrevious),
+            3: keyMacro('Channel >>', discordChannelNext)
+        }
     )
 }
 
 while True:
     if buttonOne.value:
         macroDictionary[currentMacroPage].keyMacroList[0].action()
+        time.sleep(0.2)
 
     elif buttonTwo.value:
         macroDictionary[currentMacroPage].keyMacroList[1].action()
+        time.sleep(0.2)
 
     elif buttonThree.value:
         macroDictionary[currentMacroPage].keyMacroList[2].action()
+        time.sleep(0.2)
 
     elif buttonFour.value:
         macroDictionary[currentMacroPage].keyMacroList[3].action()
+        time.sleep(0.2)
 
     elif buttonFive.value:
         # Debugging memory
         # printButtonPress(str(gc.mem_free()))
         printButtonPress('')
         
-        if currentMacroPage == 1:
+        if currentMacroPage == (len(macroDictionary) - 1):
             currentMacroPage = 0
         else:
             currentMacroPage = currentMacroPage + 1
+        time.sleep(0.2)
 
     else:
         # Dispay the list of macros for the current page
         displayMacroList()
 
-        time.sleep(0.02)
+        time.sleep(0.01)
 
         
         
